@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/demo-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node --test
+
+  scan:
+    name: Security scan (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filesystem scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: fs
+          scan-ref: apps/demo-service
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+
+  build:
+    name: Build & push image
+    needs: [test, scan]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t demo-service:${{ github.sha }} apps/demo-service
+      - name: Image scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: demo-service:${{ github.sha }}
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+      - name: Push to GHCR (main only)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker tag demo-service:${{ github.sha }} ghcr.io/${{ github.repository }}/demo-service:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}/demo-service:${{ github.sha }}

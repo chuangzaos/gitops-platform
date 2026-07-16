@@ -1,0 +1,29 @@
+replicaCount: 2
+
+image:
+  # For local-first (Kind) we build & load the image locally, no registry needed.
+  repository: demo-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: demo.local
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# ServiceMonitor is picked up by kube-prometheus-stack (release label matches).
+serviceMonitor:
+  enabled: true
+  interval: 15s
