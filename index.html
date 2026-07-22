@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jack — DevOps Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@300;400&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================
+   CSS Custom Properties — Dual Theme
+   ============================================ */
+:root {
+  --transition-theme: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-hover: 0.35s cubic-bezier(0.25, 0, 0, 1);
+  --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0b0b10;
+  --color-bg-alt: #111118;
+  --color-surface: #161621;
+  --color-surface-hover: #1e1e2c;
+  --color-border: rgba(255,255,255,0.06);
+  --color-border-hover: rgba(255,255,255,0.12);
+  --color-text: #e4e2df;
+  --color-text-muted: #8a8884;
+  --color-text-dim: #5a5854;
+  --color-accent: #c9a87c;
+  --color-accent-dim: rgba(201,168,124,0.18);
+  --color-accent-glow: rgba(201,168,124,0.08);
+  --color-tag-bg: rgba(255,255,255,0.04);
+  --color-tag-border: rgba(255,255,255,0.08);
+  --color-tag-text: #b0aeaa;
+  --color-card-shadow: rgba(0,0,0,0.4);
+  --color-overlay: rgba(0,0,0,0.5);
+  --color-input-bg: rgba(255,255,255,0.04);
+  --color-input-border: rgba(255,255,255,0.1);
+  --color-input-focus: rgba(201,168,124,0.3);
+  --color-danger: #e06060;
+  --color-success: #60b080;
+  --glow-strength: 0.15;
+}
+
+[data-theme="light"] {
+  --color-bg: #faf8f5;
+  --color-bg-alt: #f5f2ee;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8f6f3;
+  --color-border: rgba(0,0,0,0.06);
+  --color-border-hover: rgba(0,0,0,0.12);
+  --color-text: #1a1a24;
+  --color-text-muted: #6b6965;
+  --color-text-dim: #9a9894;
+  --color-accent: #b8860b;
+  --color-accent-dim: rgba(184,134,11,0.12);
+  --color-accent-glow: rgba(184,134,11,0.05);
+  --color-tag-bg: rgba(0,0,0,0.03);
+  --color-tag-border: rgba(0,0,0,0.08);
+  --color-tag-text: #5a5854;
+  --color-card-shadow: rgba(0,0,0,0.06);
+  --color-overlay: rgba(0,0,0,0.03);
+  --color-input-bg: rgba(0,0,0,0.02);
+  --color-input-border: rgba(0,0,0,0.1);
+  --color-input-focus: rgba(184,134,11,0.2);
+  --color-danger: #c0392b;
+  --color-success: #27ae60;
+  --glow-strength: 0.08;
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Work Sans', system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.7;
+  transition: background-color var(--transition-theme), color var(--transition-theme);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Cursor Glow Orb
+   ============================================ */
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    var(--color-accent-glow),
+    transparent 60%
+  );
+  opacity: var(--glow-strength);
+  transition: opacity var(--transition-theme);
+}
+
+/* ============================================
+   Navigation
+   ============================================ */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  mask-image: linear-gradient(to bottom, black 60%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent);
+}
+
+.theme-toggle {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-hover);
+  color: var(--color-text-muted);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-accent);
+  transform: scale(1.05);
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  transition: transform var(--transition-spring), opacity var(--transition-hover);
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun { opacity: 1; transform: rotate(0deg); }
+[data-theme="dark"] .theme-toggle .icon-moon { opacity: 0; transform: rotate(90deg); position: absolute; }
+[data-theme="light"] .theme-toggle .icon-sun { opacity: 0; transform: rotate(-90deg); position: absolute; }
+[data-theme="light"] .theme-toggle .icon-moon { opacity: 1; transform: rotate(0deg); }
+
+/* ============================================
+   Main Content Container
+   ============================================ */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6rem 0 4rem;
+  position: relative;
+}
+
+.hero-avatar-wrap {
+  margin-bottom: 2.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.hero-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+  transition: border-color var(--transition-hover), transform var(--transition-hover);
+  filter: grayscale(20%);
+  background: var(--color-surface);
+}
+
+.hero-avatar-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-accent-dim);
+  opacity: 0;
+  transition: opacity var(--transition-hover), transform var(--transition-hover);
+  transform: scale(1.08);
+}
+
+.hero-avatar-wrap:hover .hero-avatar { border-color: var(--color-accent); transform: scale(1.04); }
+.hero-avatar-wrap:hover::after { opacity: 1; transform: scale(1); }
+
+.hero-name {
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
+}
+
+.hero-tagline {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  font-weight: 300;
+  color: var(--color-accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+.hero-desc {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  max-width: 520px;
+  line-height: 1.8;
+}
+
+.hero-desc .highlight {
+  color: var(--color-accent);
+  font-weight: 400;
+}
+
+/* ============================================
+   Section Headings
+   ============================================ */
+.section { padding: 5rem 0; }
+
+.section-label {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+  margin-bottom: 2.5rem;
+}
+
+.section-label::before { content: '// '; color: var(--color-accent); }
+
+/* ============================================
+   Skills
+   ============================================ */
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1.1rem;
+  background: var(--color-tag-bg);
+  border: 1px solid var(--color-tag-border);
+  border-radius: var(--radius-full);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.8rem;
+  color: var(--color-tag-text);
+  transition: all var(--transition-hover);
+  cursor: default;
+  user-select: none;
+}
+
+.skill-tag:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--color-accent-glow);
+}
+
+/* ============================================
+   Projects
+   ============================================ */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 700px) {
+  .projects-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.project-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  transition: all var(--transition-hover);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-hover);
+}
+
+.project-card:hover {
+  border-color: var(--color-border-hover);
+  background: var(--color-surface-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px var(--color-card-shadow);
+}
+
+.project-card:hover::before { opacity: 1; }
+
+.project-header { display: flex; align-items: center; gap: 0.6rem; }
+.project-icon { width: 20px; height: 20px; color: var(--color-accent); flex-shrink: 0; }
+.project-name { font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 0.95rem; font-weight: 400; color: var(--color-text); }
+.project-desc { font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; flex: 1; }
+.project-meta { display: flex; align-items: center; gap: 1.2rem; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 0.75rem; color: var(--color-text-dim); }
+.project-meta-item { display: flex; align-items: center; gap: 0.35rem; }
+.project-lang-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--color-accent); }
+.project-card .star-icon { width: 14px; height: 14px; }
+
+/* ============================================
+   Contact Form
+   ============================================ */
+.contact-section { padding: 5rem 0 8rem; }
+
+.contact-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, var(--color-accent-glow), transparent 70%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.contact-card > * { position: relative; z-index: 1; }
+
+.contact-heading {
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.contact-subtitle {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group.full { grid-column: 1 / -1; }
+
+.form-label {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.08em;
+}
+
+.form-input,
+.form-textarea {
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1rem;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  transition: all var(--transition-hover);
+  outline: none;
+  resize: vertical;
+}
+
+.form-textarea { min-height: 120px; line-height: 1.6; }
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-input-focus);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder { color: var(--color-text-dim); }
+
+.submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.9rem;
+  margin-top: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: all var(--transition-hover);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-accent);
+  opacity: 0;
+  transition: opacity var(--transition-hover);
+}
+
+.submit-btn:hover { color: var(--color-bg); }
+.submit-btn:hover::before { opacity: 1; }
+
+.submit-btn span,
+.submit-btn svg { position: relative; z-index: 1; }
+
+.submit-btn .btn-icon {
+  width: 18px; height: 18px;
+  transition: transform var(--transition-spring);
+}
+
+.submit-btn:hover .btn-icon { transform: translateX(3px); }
+
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.form-status {
+  text-align: center;
+  margin-top: 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  min-height: 1.5rem;
+  transition: all var(--transition-hover);
+}
+
+.form-status.success { color: var(--color-success); }
+.form-status.error { color: var(--color-danger); }
+
+/* ============================================
+   Footer
+   ============================================ */
+.footer {
+  text-align: center;
+  padding: 2rem 2rem 3rem;
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+/* ============================================
+   Scroll Animations
+   ============================================ */
+.animate-in {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s cubic-bezier(0.25, 0, 0, 1),
+              transform 0.8s cubic-bezier(0.25, 0, 0, 1);
+}
+
+.animate-in.visible { opacity: 1; transform: translateY(0); }
+
+.delay-1 { transition-delay: 0.05s; }
+.delay-2 { transition-delay: 0.1s; }
+.delay-3 { transition-delay: 0.15s; }
+.delay-4 { transition-delay: 0.2s; }
+.delay-5 { transition-delay: 0.25s; }
+.delay-6 { transition-delay: 0.3s; }
+
+/* ============================================
+   Loading / Empty State
+   ============================================ */
+.loading-shimmer {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  animation: shimmer-pulse 2s ease-in-out infinite;
+}
+
+@keyframes shimmer-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.empty-state svg {
+  width: 48px; height: 48px;
+  margin-bottom: 1rem;
+  color: var(--color-text-dim);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 600px) {
+  .main { padding: 0 1.25rem; }
+  .nav { padding: 1rem 1.25rem; }
+  .hero { padding: 5rem 0 3rem; min-height: auto; }
+  .contact-card { padding: 2rem 1.25rem; }
+  .section { padding: 3.5rem 0; }
+  .contact-section { padding: 3.5rem 0 5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor Glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-10-10h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-avatar-wrap animate-in">
+      <img class="hero-avatar" id="heroAvatar" src="" alt="Jack">
+    </div>
+    <h1 class="hero-name animate-in delay-1" id="heroName">Jack</h1>
+    <p class="hero-tagline animate-in delay-2" id="heroTagline">SRE / DevOps Engineer</p>
+    <p class="hero-desc animate-in delay-3" id="heroBio"></p>
+  </section>
+
+  <!-- Skills -->
+  <section class="section">
+    <h2 class="section-label">技术栈</h2>
+    <div class="skills-grid animate-in delay-1" id="skillsGrid"></div>
+  </section>
+
+  <!-- Projects -->
+  <section class="section">
+    <h2 class="section-label">开源项目</h2>
+    <div class="projects-grid" id="projectsGrid">
+      <div class="loading-shimmer"></div>
+      <div class="loading-shimmer"></div>
+    </div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+      </svg>
+      <p>暂无公开项目</p>
+    </div>
+  </section>
+
+  <!-- Contact Form -->
+  <section class="contact-section">
+    <div class="contact-card animate-in">
+      <h2 class="contact-heading">联系我</h2>
+      <p class="contact-subtitle">有合作意向或技术交流？直接在这里给我留言</p>
+      <form id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="formName">姓名</label>
+            <input class="form-input" type="text" id="formName" name="name" placeholder="你的名字" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formEmail">邮箱</label>
+            <input class="form-input" type="email" id="formEmail" name="email" placeholder="you@example.com" required>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0.5rem">
+          <label class="form-label" for="formSubject">主题</label>
+          <input class="form-input" type="text" id="formSubject" name="subject" placeholder="想聊什么？">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label" for="formMessage">留言</label>
+          <textarea class="form-textarea" id="formMessage" name="message" placeholder="请输入你的留言..." required></textarea>
+        </div>
+        <input type="hidden" name="access_key" id="web3formsKey">
+        <input type="hidden" name="from_name" value="Portfolio Contact">
+        <button type="submit" class="submit-btn">
+          <span>发送留言</span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </form>
+      <div class="form-status" id="formStatus"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p id="footerText">&copy; 2026 Jack · Built with precision</p>
+</footer>
+
+<script>
+/* ============================================
+   Default Config (fallback)
+   ============================================ */
+const DEFAULT_CONFIG = {
+  name: 'Jack',
+  tagline: 'SRE / DevOps Engineer',
+  bio: '专注于<span class="highlight">云原生基础设施</span>、自动化运维与平台工程。信奉 Infrastructure as Code，追求系统<span class="highlight">可靠性</span>与<span class="highlight">交付效率</span>的平衡。',
+  email: 'qwe842079@gmail.com',
+  github: 'chuangzaos',
+  skills: ['Kubernetes','Docker','Terraform','Ansible','Linux','GitOps','CI/CD','Prometheus','Grafana','Helm','GitHub Actions','JavaScript','Python','Shell'],
+  web3forms_key: ''
+};
+
+const CONFIG_URL = 'https://raw.githubusercontent.com/chuangzaos/gitops-platform/main/config.json';
+
+/* ============================================
+   Config Loader
+   ============================================ */
+async function loadConfig() {
+  let config = DEFAULT_CONFIG;
+  try {
+    const res = await fetch(CONFIG_URL);
+    if (res.ok) {
+      const data = await res.json();
+      config = { ...DEFAULT_CONFIG, ...data };
+    }
+  } catch (e) {
+    console.warn('Config fetch failed, using defaults:', e.message);
+  }
+
+  // Populate Hero
+  document.getElementById('heroName').textContent = config.name;
+  document.getElementById('heroTagline').textContent = config.tagline;
+  document.getElementById('heroBio').innerHTML = config.bio;
+  document.title = config.name + ' — ' + (config.tagline || 'Portfolio');
+
+  // Populate Skills
+  const skillsGrid = document.getElementById('skillsGrid');
+  skillsGrid.innerHTML = config.skills.map(s =>
+    `<span class="skill-tag">${escapeHtml(s)}</span>`
+  ).join('');
+
+  // Populate Footer
+  document.getElementById('footerText').textContent =
+    '\u00a9 ' + new Date().getFullYear() + ' ' + config.name + ' \u00b7 精心构建';
+
+  // Web3Forms Key
+  if (config.web3forms_key) {
+    document.getElementById('web3formsKey').value = config.web3forms_key;
+  }
+
+  // Re-observe newly created elements
+  observeAnimated();
+}
+
+/* ============================================
+   Theme Toggle
+   ============================================ */
+(function() {
+  const html = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme');
+  if (saved === 'light' || saved === 'dark') html.setAttribute('data-theme', saved);
+  toggle.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+})();
+
+/* ============================================
+   Cursor Glow Follow
+   ============================================ */
+(function() {
+  const glow = document.getElementById('cursorGlow');
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let cx = mx, cy = my;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function anim() {
+    cx += (mx - cx) * 0.06; cy += (my - cy) * 0.06;
+    glow.style.setProperty('--mouse-x', cx + 'px');
+    glow.style.setProperty('--mouse-y', cy + 'px');
+    requestAnimationFrame(anim);
+  }
+  anim();
+})();
+
+/* ============================================
+   Scroll Animations
+   ============================================ */
+function observeAnimated() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.animate-in').forEach(el => obs.observe(el));
+}
+
+/* ============================================
+   GitHub API — Fetch Repositories
+   ============================================ */
+(async function() {
+  const grid = document.getElementById('projectsGrid');
+  const empty = document.getElementById('emptyState');
+  const githubUser = DEFAULT_CONFIG.github;
+
+  try {
+    const [userRes, reposRes] = await Promise.all([
+      fetch('https://api.github.com/users/' + githubUser),
+      fetch('https://api.github.com/users/' + githubUser + '/repos?sort=updated&per_page=20&type=owner')
+    ]);
+    if (!userRes.ok || !reposRes.ok) throw new Error('API error');
+    const user = await userRes.json();
+    const repos = await reposRes.json();
+
+    document.getElementById('heroAvatar').src = user.avatar_url || '';
+
+    const projects = repos
+      .filter(r => !r.fork)
+      .sort((a, b) => (b.stargazers_count - a.stargazers_count) || (new Date(b.updated_at) - new Date(a.updated_at)));
+
+    if (projects.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+
+    const langColors = {
+      'JavaScript':'#f1e05a','TypeScript':'#3178c6','Python':'#3572A5','Go':'#00ADD8','Rust':'#dea584',
+      'Shell':'#89e051','Java':'#b07219','HTML':'#e34c26','CSS':'#563d7c','Ruby':'#701516',
+      'C':'#555555','C++':'#f34b7d','Dockerfile':'#384d54','HCL':'#844FBA','YAML':'#cb171e'
+    };
+
+    grid.innerHTML = projects.map((repo, i) => {
+      const desc = repo.description || 'No description yet.';
+      const langColor = langColors[repo.language] || '#c9a87c';
+      return `
+        <a class="project-card animate-in" href="${repo.html_url}" target="_blank" rel="noopener" style="transition-delay:${(i%3)*0.05}s">
+          <div class="project-header">
+            <svg class="project-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span class="project-name">${escapeHtml(repo.name)}</span>
+          </div>
+          <p class="project-desc">${escapeHtml(desc)}</p>
+          <div class="project-meta">
+            ${repo.language ? `<span class="project-meta-item"><span class="project-lang-dot" style="background:${langColor}"></span>${escapeHtml(repo.language)}</span>` : ''}
+            ${repo.stargazers_count > 0 ? `<span class="project-meta-item"><svg class="star-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>${repo.stargazers_count}</span>` : ''}
+            <span class="project-meta-item">${repo.license ? escapeHtml(repo.license.spdx_id) : '\u2014'}</span>
+          </div>
+        </a>`;
+    }).join('');
+
+    observeAnimated();
+  } catch (err) {
+    console.error('GitHub fetch error:', err);
+    grid.innerHTML = '<p class="empty-state">项目加载失败，请稍后重试。</p>';
+  }
+})();
+
+/* ============================================
+   Contact Form — Web3Forms
+   ============================================ */
+(function() {
+  const form = document.getElementById('contactForm');
+  const status = document.getElementById('formStatus');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const keyField = document.getElementById('web3formsKey');
+    if (!keyField.value) {
+      status.className = 'form-status error';
+      status.textContent = '联系表单尚未配置。';
+      return;
+    }
+
+    const btn = form.querySelector('.submit-btn');
+    btn.disabled = true;
+    btn.querySelector('span').textContent = 'Sending...';
+    status.className = 'form-status';
+    status.textContent = '';
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form)))
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        status.className = 'form-status success';
+        status.textContent = '留言已发送！我会尽快回复。';
+        form.reset();
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
+    } catch (err) {
+      status.className = 'form-status error';
+      status.textContent = '发送失败，请重试或直接发送邮件。';
+    } finally {
+      btn.disabled = false;
+      btn.querySelector('span').textContent = '发送留言';
+    }
+  });
+})();
+
+/* ============================================
+   Initial Load
+   ============================================ */
+loadConfig().then(observeAnimated);
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
