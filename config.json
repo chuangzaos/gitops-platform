@@ -1,0 +1,9 @@
+{
+  "name": "Jack",
+  "tagline": "SRE / DevOps Engineer",
+  "bio": "专寺于<span class=\"highlight\">云本生 基础设施</span>、自动化运维与平台工程。信妉 Infrastructure as Code，追求系统<span class=\"highlight\">可靠性</span>与<span class=\"highlight\">交付效率</span>的平衡。",
+  "email": "qwe842079@gmail.com",
+  "github": "chuangzaos",
+  "skills": ["Kubernetes", "Docker", "Terraform", "Ansible", "Linux", "GitOps", "CI/CD", "Prometheus", "Grafana", "Helm", "GitHub Actions", "JavaScript", "Python", "Shell"],
+  "web3forms_key": ""
+}
