@@ -1,20 +1,62 @@
 {
   "name": "Jack",
   "tagline": "SRE / DevOps Engineer",
-  "bio": "无限进步~",
+  "bio": "无限进步",
   "email": "qwe842079@gmail.com",
   "github": "chuangzaos",
+  "avatar": "https://avatars.githubusercontent.com/u/122095877?v=4",
+  "web3forms_key": "b91b8852-94e2-4c6d-8c57-ca53d4e08ba8",
+  "sections": {
+    "hero": false,
+    "skills": true,
+    "projects": true,
+    "experience": true,
+    "contact": true
+  },
   "skills": [
     "Kubernetes",
     "Docker",
     "Ansible",
     "Linux",
-    "CI/CD",
     "Prometheus",
     "Grafana",
     "Helm",
     "Python",
     "Shell"
   ],
-  "web3forms_key": "b91b8852-94e2-4c6d-8c57-ca53d4e08ba8"
+  "experiences": [
+    {
+      "title": "DevOps / SRE 工程师",
+      "company": "GitOps Platform 项目",
+      "period": "2025 — 至今",
+      "points": [
+        "搭建基于 Kubernetes 的 GitOps 部署流水线",
+        "实现 CI/CD 自动化，将部署时间缩短 70%",
+        "构建 Prometheus + Grafana 监控体系",
+        "编写 Terraform 基础设施即代码模块"
+      ],
+      "tags": [
+        "Kubernetes",
+        "ArgoCD",
+        "Terraform",
+        "Prometheus"
+      ]
+    },
+    {
+      "title": "云原生基础设施工程师",
+      "company": "个人工作室 & 自由职业",
+      "period": "2023 — 2025",
+      "points": [
+        "为中小企业设计并实施云迁移方案",
+        "搭建 Docker 容器化应用部署平台",
+        "开发自动化运维脚本，减少人工操作 80%"
+      ],
+      "tags": [
+        "Docker",
+        "Ansible",
+        "Linux",
+        "Shell"
+      ]
+    }
+  ]
 }
