@@ -7,7 +7,7 @@
   "avatar": "https://avatars.githubusercontent.com/u/122095877?v=4",
   "web3forms_key": "b91b8852-94e2-4c6d-8c57-ca53d4e08ba8",
   "sections": {
-    "hero": false,
+    "hero": true,
     "skills": true,
     "projects": true,
     "experience": true,
