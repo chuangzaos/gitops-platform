@@ -1,7 +1,7 @@
 {
   "name": "Jack",
   "tagline": "SRE / DevOps Engineer",
-  "bio": "无限进步~",
+  "bio": "æ éè¿æ­¥~",
   "email": "qwe842079@gmail.com",
   "github": "chuangzaos",
   "avatar": "https://avatars.githubusercontent.com/u/122095877?v=4",
@@ -26,8 +26,8 @@
   ],
   "experiences": [
     {
-      "title": "运维工程师",
-      "company": "k8s商城管理系统",
+      "title": "è¿ç»´å·¥ç¨å¸",
+      "company": "k8sååç®¡çç³»ç»",
       "period": "",
       "points": [],
       "tags": [
@@ -39,7 +39,7 @@
     },
     {
       "title": "SRE",
-      "company": "洛克王国",
+      "company": "æ´åçå½",
       "period": "2023",
       "points": [],
       "tags": [
