@@ -1,0 +1,14 @@
+node_modules/
+npm-debug.log*
+.DS_Store
+
+# local env
+.env
+.env.local
+
+# editor
+.idea/
+.vscode/
+
+# kind / k8s artifacts
+*.kubeconfig
