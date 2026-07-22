@@ -24,30 +24,5 @@
     "Python",
     "Shell"
   ],
-  "experiences": [
-    {
-      "title": "workbuddy",
-      "company": "阿斯蒂芬",
-      "period": "",
-      "points": [],
-      "tags": [
-        "Kubernetes",
-        "ArgoCD",
-        "Terraform",
-        "Prometheus"
-      ]
-    },
-    {
-      "title": "SRE",
-      "company": "",
-      "period": "2023",
-      "points": [],
-      "tags": [
-        "Docker",
-        "Ansible",
-        "Linux",
-        "Shell"
-      ]
-    }
-  ]
+  "experiences": []
 }
